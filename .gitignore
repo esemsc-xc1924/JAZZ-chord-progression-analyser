@@ -1,0 +1,9 @@
+# Ignore the sounds directory
+static/sounds/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore system files
+.DS_Store
