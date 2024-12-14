@@ -32,3 +32,27 @@
 .chord-btn:hover {
     background-color: #0056b3;
 }
+
+/* Progression Bar */
+#progression-bar {
+    min-height: 50px;
+    border: 2px dashed #ccc;
+    padding: 10px;
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#progression-bar .chord-btn {
+    cursor: move;
+}
+
+/* Button Hover Effect During Drag */
+.drop-area {
+    transition: background-color 0.2s;
+}
+
+.drop-area.drag-over {
+    background-color: #e0ffe0;
+}

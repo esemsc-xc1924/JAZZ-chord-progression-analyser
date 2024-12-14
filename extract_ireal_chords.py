@@ -1,7 +1,8 @@
+# import music21
 import music21
 
 # Load the MusicXML file using music21
-file_path = 'Watermelon Man.musicxml'  # Update the path to your file
+file_path = 'If You Never Come To Me (Inutil Paisagem).musicxml'  # Update the path to your file
 score = music21.converter.parse(file_path)
 
 # Extract song metadata and chords
