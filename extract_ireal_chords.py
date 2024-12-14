@@ -1,25 +1,71 @@
-# import music21
+import os
+import json
+import sqlite3
 import music21
 
-# Load the MusicXML file using music21
-file_path = 'If You Never Come To Me (Inutil Paisagem).musicxml'  # Update the path to your file
-score = music21.converter.parse(file_path)
+# Directory containing MusicXML files
+dataset_dir = "/Users/wangziyi/Desktop/JAZZ-chord-progression-analyser/dataset_demo"
 
-# Extract song metadata and chords
-song_name = score.metadata.title if score.metadata and score.metadata.title else "Unknown"
-chords = []
+# SQLite database file
+db_path = "/Users/wangziyi/Desktop/JAZZ-chord-progression-analyser/songs.db"
 
-# Iterate through the elements to find chords (harmony objects)
-for element in score.recurse():
-    if isinstance(element, music21.harmony.ChordSymbol):
-        chords.append(element.figure)
+# Initialize the database
+def initialize_database():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS songs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            chord_progression TEXT NOT NULL,
+            sheet_music_link TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-# Compile the extracted data into a dictionary
-song_data = {
-    "song_name": song_name,
-    "chords": chords
-}
+# Function to process a single MusicXML file
+def process_musicxml(file_path):
+    try:
+        score = music21.converter.parse(file_path)
+        song_name = score.metadata.title if score.metadata and score.metadata.title else os.path.basename(file_path)
+        chords = []
 
-# Print as JSON
-import json
-print(json.dumps(song_data, indent=2))
+        # Extract chord progression
+        for element in score.recurse():
+            if isinstance(element, music21.harmony.ChordSymbol):
+                chords.append(element.figure)
+
+        return {
+            "name": song_name,
+            "chords": chords,
+            "sheet_music_link": file_path  # Store the file path as the link
+        }
+    except Exception as e:
+        print(f"Error processing file {file_path}: {e}")
+        return None
+
+# Store song data in the database
+def store_song_in_db(song_data):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO songs (name, chord_progression, sheet_music_link)
+        VALUES (?, ?, ?)
+    ''', (song_data["name"], json.dumps(song_data["chords"]), song_data["sheet_music_link"]))
+    conn.commit()
+    conn.close()
+
+# Process all MusicXML files in the directory
+def process_all_files():
+    for filename in os.listdir(dataset_dir):
+        if filename.endswith(".musicxml"):
+            file_path = os.path.join(dataset_dir, filename)
+            song_data = process_musicxml(file_path)
+            if song_data:
+                store_song_in_db(song_data)
+                print(f"Stored: {song_data['name']}")
+
+# Initialize database and process files
+initialize_database()
+process_all_files()

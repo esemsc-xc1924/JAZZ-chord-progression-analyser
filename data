@@ -1,0 +1,6 @@
+CREATE TABLE songs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    chord_progression TEXT NOT NULL,
+    sheet_music_link TEXT
+);
