@@ -1,0 +1,10 @@
+name: jazz
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - flask
+  - music21
+  - pip
+  - pip:
+      - midi2audio
