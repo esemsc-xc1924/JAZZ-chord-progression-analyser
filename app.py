@@ -4,7 +4,7 @@ from midi2audio import FluidSynth
 from pydub import AudioSegment
 
 import os
-
+print(os.getcwd())
 app = Flask(__name__)
 
 # Directory to store generated audio files
@@ -14,6 +14,7 @@ if not os.path.exists(AUDIO_DIR):
 
 # Path to the SoundFont file
 SOUNDFONT_PATH = "/Users/wangziyi/Desktop/JAZZ-chord-progression-analyser/GeneralUserGSv1.471.sf2"
+SOUNDFONT_PATH = "/Users/ege/Projects/JAZZ-chord-progression-analyser/GeneralUserGSv1.471.sf2"
 fs = FluidSynth(SOUNDFONT_PATH)
 
 # Backend default settings for chord duration and tempo
@@ -27,7 +28,7 @@ def index():
 # Function to generate a chord as a WAV file
 def generate_chord_audio(selected_key, selected_chord):
     """
-    Generates a chord MIDI and converts it to a WAV file.
+    Generates a chord MIDI and converts it to a WAV file in root position.
 
     Args:
         selected_key (str): The musical key (e.g., "C").
@@ -36,26 +37,32 @@ def generate_chord_audio(selected_key, selected_chord):
     Returns:
         str: Path to the generated WAV file.
     """
-    # Map chord types to scale degrees
-    roman_to_scale = {
-        "I": [1, 3, 5],
-        "ii": [2, 4, 6],
-        "iii": [3, 5, 7],
-        "IV": [4, 6, 1],
-        "V": [5, 7, 2],
-        "vi": [6, 1, 3],
-        "vii°": [7, 2, 4],
+    # Map chord types to intervals (in semitones)
+    roman_to_intervals = {
+        "I": [0, 4, 7],        # Major
+        "ii": [0, 3, 7],       # Minor
+        "iii": [0, 3, 7],      # Minor
+        "IV": [0, 4, 7],       # Major
+        "V": [0, 4, 7],        # Major
+        "vi": [0, 3, 7],       # Minor
+        "vii°": [0, 3, 6],     # Diminished
     }
 
-    # Create a key object
+    # Get the root MIDI note for the selected scale degree
     music_key = key.Key(selected_key)
+    scale_degrees = {
+        "I": 1, "ii": 2, "iii": 3, "IV": 4, "V": 5, "vi": 6, "vii°": 7
+    }
+    root_degree = scale_degrees[selected_chord]
+    root_pitch = music_key.pitchFromDegree(root_degree)  # Get the pitch
+    root_midi = root_pitch.midi  # Get MIDI note number
 
-    # Get the chord pitches
-    scale_degrees = roman_to_scale[selected_chord]
-    pitches = [music_key.pitchFromDegree(degree) for degree in scale_degrees]
+    # Construct the chord in root position using intervals
+    intervals = roman_to_intervals[selected_chord]
+    chord_midi_notes = [root_midi + interval for interval in intervals]
 
-    # Create a chord object and set its duration
-    music_chord = chord.Chord(pitches)
+    # Create a music21 chord object
+    music_chord = chord.Chord(chord_midi_notes)
     music_chord.duration = duration.Duration(DEFAULT_CHORD_DURATION)
 
     # Create a music21 Stream and set the tempo
@@ -76,10 +83,11 @@ def generate_chord_audio(selected_key, selected_chord):
     # Convert MIDI to WAV using FluidSynth
     fs.midi_to_audio(midi_filename, wav_filename)
 
-    # Trim the last 1–2 seconds of silence from the WAV file
-    trim_trailing_silence(wav_filename, trim_duration=3000)  # Trim 2 seconds
+    # Trim trailing silence from the WAV file
+    trim_trailing_silence(wav_filename, trim_duration=3000)
 
     return wav_filename
+
 
 def trim_trailing_silence(wav_file, trim_duration=2000):
     """
