@@ -13,7 +13,6 @@ if not os.path.exists(AUDIO_DIR):
     os.makedirs(AUDIO_DIR)
 
 # Path to the SoundFont file
-SOUNDFONT_PATH = "/Users/wangziyi/Desktop/JAZZ-chord-progression-analyser/GeneralUserGSv1.471.sf2"
 SOUNDFONT_PATH = "GeneralUserGSv1.471.sf2"
 fs = FluidSynth(SOUNDFONT_PATH)
 

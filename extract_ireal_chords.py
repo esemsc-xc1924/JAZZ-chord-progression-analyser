@@ -4,10 +4,10 @@ import sqlite3
 import music21
 
 # Directory containing MusicXML files
-dataset_dir = "/Users/wangziyi/Desktop/JAZZ-chord-progression-analyser/dataset_demo"
+dataset_dir = "/Users/xingchenchen/Desktop/JAZZ-chord-progression-analyser/dataset_demo"
 
 # SQLite database file
-db_path = "/Users/wangziyi/Desktop/JAZZ-chord-progression-analyser/songs.db"
+db_path = "songs.db"
 
 # Initialize the database
 def initialize_database():
@@ -36,6 +36,8 @@ def process_musicxml(file_path):
             if isinstance(element, music21.harmony.ChordSymbol):
                 chords.append(element.figure)
 
+        print(f"Extracted {len(chords)} chords from {file_path}")
+        print(chords)
         return {
             "name": song_name,
             "chords": chords,
