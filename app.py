@@ -43,76 +43,6 @@ def trim_trailing_silence(wav_file, trim_duration=2000):
     # Save the trimmed audio back to the file
     trimmed_audio.export(wav_file, format="wav")
 
-# Function to generate a chord as a WAV file
-def generate_chord_audio_old(selected_key, selected_chord):
-    """
-    Generates a chord MIDI and converts it to a WAV file in root position.
-
-    Args:
-        selected_key (str): The musical key (e.g., "C").
-        selected_chord (str): The chord type (e.g., "I").
-
-    Returns:
-        str: Path to the generated WAV file.
-    """
-    # Map chord types to intervals (in semitones)
-    roman_to_intervals = {
-        "I": [0, 4, 7],        # Major
-        "ii": [0, 3, 7],       # Minor
-        "iii": [0, 3, 7],      # Minor
-        "IV": [0, 4, 7],       # Major
-        "V": [0, 4, 7],        # Major
-        "vi": [0, 3, 7],       # Minor
-        "vii°": [0, 3, 6],     # Diminished
-    }
-
-    # Get the root MIDI note for the selected scale degree
-    music_key = key.Key(selected_key)
-    scale_degrees = {
-        "I": 1, "ii": 2, "iii": 3, "IV": 4, "V": 5, "vi": 6, "vii°": 7
-    }
-    root_degree = scale_degrees[selected_chord]
-    root_pitch = music_key.pitchFromDegree(root_degree)  # Get the pitch
-    root_midi = root_pitch.midi  # Get MIDI note number
-    print(f"Selected chord: {selected_chord}, Root MIDI: {root_midi}")
-
-    # Adjust octave for high-pitched keys (F and above)
-    if selected_key in ["F", "F#", "Gb", "G", "G#", "Ab", "A", "Bb", "B"]:
-        root_midi -= 12  # Lower by one octave
-
-
-    # Construct the chord in root position using intervals
-    intervals = roman_to_intervals[selected_chord]
-    chord_midi_notes = [root_midi + interval for interval in intervals]
-
-    # Create a music21 chord object
-    music_chord = chord.Chord(chord_midi_notes)
-    music_chord.duration = duration.Duration(DEFAULT_CHORD_DURATION)
-
-    # Create a music21 Stream and set the tempo
-    s = stream.Stream()
-    s.append(tempo.MetronomeMark(number=DEFAULT_TEMPO_BPM))
-    s.append(music_chord)
-
-    selected_key_clean = selected_key.replace("#", "sharp")
-    # Generate MIDI and WAV filenames
-    midi_filename = f"{AUDIO_DIR}/{selected_key_clean}_{selected_chord}.mid"
-    wav_filename = midi_filename.replace(".mid", ".wav")
-
-    # Write MIDI file
-    mf = midi.translate.music21ObjectToMidiFile(s)
-    mf.open(midi_filename, "wb")
-    mf.write()
-    mf.close()
-
-    # Convert MIDI to WAV using FluidSynth
-    fs.midi_to_audio(midi_filename, wav_filename)
-
-    # Trim trailing silence from the WAV file
-    trim_trailing_silence(wav_filename, trim_duration=3000)
-
-    return wav_filename
-
 
 def get_base_chord(selected_chord):
     # Match a chord suffix pattern and remove it
@@ -179,18 +109,6 @@ def generate_chord_audio(selected_key, selected_chord=None):
 
     print(f"Base chord: {base_chord}, Scale degrees: {scale_degrees}, Alteration: {alteration}")
 
-    # Extract base chord and alteration
-    #base_chord = get_base_chord(selected_chord) if selected_chord else None
-    #alteration = selected_chord[len(base_chord):] if selected_chord else None
-
-    # Determine chord type and intervals
-    #if base_chord in roman_to_scale:
-    #    chord_type, scale_degrees = roman_to_scale[base_chord]
-    #else:
-        # Default to major for unknown cases
-    #    chord_type = "maj"
-    #    scale_degrees = [1]
-
     # Get the root MIDI note
     music_key = key.Key(selected_key)
     root_midi = music_key.pitchFromDegree(scale_degrees[0]).midi
@@ -242,27 +160,6 @@ def generate_chord_audio(selected_key, selected_chord=None):
 
     return wav_filename
 
-
-# # Handle chord generation requests
-# @app.route("/generate_chord", methods=["POST"])
-# def generate_chord():
-#     data = request.get_json()
-#     selected_key = data.get("key")
-#     selected_chord = data.get("chord")
-#     # diatonic_chord_names = data.get(dia2name)
-
-#     try:
-#         # Generate the chord audio file
-#         audio_file = generate_chord_audio(selected_key, selected_chord)
-#         return jsonify({"status": "success", "audio_file": f"/{audio_file}"})
-#     except Exception as e:
-#         return jsonify({"status": "error", "message": str(e)})
-
-# # Serve audio files
-# @app.route("/static/sounds/<filename>")
-# def serve_audio_file(filename):
-#     return send_from_directory(AUDIO_DIR, filename)
-
 @app.route("/generate_chord", methods=["POST"])
 def generate_chord():
     data = request.get_json()
@@ -298,13 +195,16 @@ def generate_chord():
         # Generate display chord with root note and chord type
         display_chord = f"{chord_note_names[0]}{chord_type if chord_type != 'maj' else ''}"
         print(f"Response to frontend: {display_chord}, Chord notes: {chord_note_names}")
+        display_chord_numeral = f"{selected_key} {selected_chord}"  # E.g., "C V"
+        print(f"ROMANResponse to frontend: {display_chord_numeral}")
 
         # Include note names and display chord in the response
         return jsonify({
             "status": "success",
             "audio_file": f"/{audio_file}",
             "chord_notes": chord_note_names,  # Add actual note names
-            "display_chord": display_chord  # Root and quality
+            "display_chord": display_chord,  # Root and quality
+            "display_chord_numeral": display_chord_numeral  # E.g., "C V"
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
