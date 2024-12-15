@@ -161,25 +161,46 @@ $(document).ready(function () {
         progressionBar.appendChild(chordContainer);
     });
 
-    // Play the chord progression
     $("#play-progression").click(async function () {
         const progression = [];
         $("#progression-bar .chord-btn").each(function () {
-            progression.push({
-                chord: $(this).data("originalChord"),
-                key: $(this).data("originalKey"),
-            });
+            progression.push($(this).data("originalChord")); // Collect only the chord names
         });
-
+    
         if (progression.length === 0) {
             alert("No chords in the progression!");
             return;
         }
-
+    
+        // Play each chord in the progression
         for (const chord of progression) {
-            await playChord(chord.key, chord.chord);
+            const key = $("#key-select").val(); // Assume all chords share the selected key
+            await playChord(key, chord);
+        }
+    
+        // Send progression to the backend to find a matching song
+// Send progression to the backend to find a matching song
+        const response = await fetch("/match_song", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ progression }), // Send progression as a JSON array
+        });
+        const result = await response.json();
+
+        if (result.status === "success") {
+            const matchedSongs = result.songs; // Expecting an array of songs
+            if (Array.isArray(matchedSongs) && matchedSongs.length > 0) {
+                // Create a list of songs to display
+                const songList = matchedSongs.map(song => `<li>${song}</li>`).join("");
+                $("#chord-info-content").html(`<ul>${songList}</ul>`); // Display as a list
+            } else {
+                $("#chord-info-content").text("No matching songs found");
+            }
+        } else {
+            $("#chord-info-content").text("An error occurred while fetching songs");
         }
     });
+    
 
     async function playChord(key, chord) {
         return new Promise((resolve) => {

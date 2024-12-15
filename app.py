@@ -8,6 +8,9 @@ import os
 print(os.getcwd())
 app = Flask(__name__)
 
+
+
+
 # Directory to store generated audio files
 AUDIO_DIR = "static/sounds"
 if not os.path.exists(AUDIO_DIR):
@@ -210,5 +213,44 @@ def generate_chord():
         return jsonify({"status": "error", "message": str(e)})
 
 
+
+song_matches = {
+    "ii,V,I": "Autumn Leaves - Joseph Kosma",
+    "I,vi,ii,V": "Fly Me to the Moon - Bart Howard",
+    "I,IV,V,I": "All of Me - Gerald Marks and Seymour Simons",
+    "I,V,vi,IV": "Blue Moon - Richard Rodgers and Lorenz Hart",
+    "I,vi,ii,V7": "Take the 'A' Train - Billy Strayhorn",
+    "ii,V,iii,vi": "There Will Never Be Another You - Harry Warren",
+    "I,ii,iii,IV": "Misty - Erroll Garner",
+    "I,vi,IV,V": "Satin Doll - Duke Ellington",
+}
+
+@app.route("/match_song", methods=["POST"])
+def match_song():
+    """
+    Matches a chord progression to all songs that start with the given progression.
+    """
+    data = request.get_json()
+    progression = data.get("progression", [])  # Expecting a list of chords
+
+    # Convert the progression list into a string key
+    progression_key = ",".join(progression)
+    print(f"Received progression: {progression_key}")
+
+    # Find all songs that start with the given progression
+    matching_songs = [
+        song for chords, song in song_matches.items()
+        if chords.startswith(progression_key)
+    ]
+
+    if not matching_songs:
+        return jsonify({"status": "success", "songs": "No matching songs found"})
+
+    print(matching_songs)
+    return jsonify({"status": "success", "songs": matching_songs})
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+
+
