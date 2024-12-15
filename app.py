@@ -58,7 +58,7 @@ def generate_chord_audio(selected_key, selected_chord):
     root_midi = root_pitch.midi  # Get MIDI note number
 
     # Adjust octave for high-pitched keys (F and above)
-    if selected_key in ["F", "F#", "G", "Ab", "A", "Bb", "B"]:
+    if selected_key in ["F", "F#", "Gb", "G", "G#", "Ab", "A", "Bb", "B"]:
         root_midi -= 12  # Lower by one octave
 
     # Construct the chord in root position using intervals
