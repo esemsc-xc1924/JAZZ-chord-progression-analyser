@@ -215,20 +215,46 @@ def generate_chord():
 
 
 song_matches = {
-    "ii,V,I": "Autumn Leaves - Joseph Kosma",
-    "I,vi,ii,V": "Fly Me to the Moon - Bart Howard",
-    "I,IV,V,I": "All of Me - Gerald Marks and Seymour Simons",
-    "I,V,vi,IV": "Blue Moon - Richard Rodgers and Lorenz Hart",
-    "I,vi,ii,V7": "Take the 'A' Train - Billy Strayhorn",
-    "ii,V,iii,vi": "There Will Never Be Another You - Harry Warren",
-    "I,ii,iii,IV": "Misty - Erroll Garner",
-    "I,vi,IV,V": "Satin Doll - Duke Ellington",
+    "ii,V,I": {"name": "Autumn Leaves - Joseph Kosma", "pdf": "static/Autumn Leaves.pdf"},
+    "I,vi,ii,V": {"name": "Fly Me to the Moon - Bart Howard", "pdf": "static/Fly Me To The Moon.pdf"},
+    "I,IV,V,I": {"name": "All of Me - Gerald Marks and Seymour Simons", "pdf": "static/all_of_me.pdf"},
+    "I,V,vi,IV": {"name": "Blue Moon - Richard Rodgers and Lorenz Hart"},  # No PDF available
+    "I,vi,ii,V7": {"name": "Take the 'A' Train - Billy Strayhorn", "pdf": "static/Take The A Train.pdf"},
+    "ii,V,iii,vi": {"name": "There Will Never Be Another You - Harry Warren"},
+    "I,ii,iii,IV": {"name": "Misty - Erroll Garner", "pdf": "static/Misty.pdf"},
+    "I,vi,IV,V": {"name": "Satin Doll - Duke Ellington", "pdf": "static/Satin Doll.pdf"},
 }
+
+
+# @app.route("/match_song", methods=["POST"])
+# def match_song():
+#     """
+#     Matches a chord progression to all songs that start with the given progression.
+#     """
+#     data = request.get_json()
+#     progression = data.get("progression", [])  # Expecting a list of chords
+
+#     # Convert the progression list into a string key
+#     progression_key = ",".join(progression)
+#     print(f"Received progression: {progression_key}")
+
+#     # Find all songs that start with the given progression
+#     matching_songs = [
+#         song for chords, song in song_matches.items()
+#         if chords.startswith(progression_key)
+#     ]
+
+#     if not matching_songs:
+#         return jsonify({"status": "success", "songs": "No matching songs found"})
+
+#     print(matching_songs)
+#     return jsonify({"status": "success", "songs": matching_songs})
+
 
 @app.route("/match_song", methods=["POST"])
 def match_song():
     """
-    Matches a chord progression to all songs that start with the given progression.
+    Matches a chord progression to all songs that start with the given progression and includes PDF links if available.
     """
     data = request.get_json()
     progression = data.get("progression", [])  # Expecting a list of chords
@@ -239,14 +265,14 @@ def match_song():
 
     # Find all songs that start with the given progression
     matching_songs = [
-        song for chords, song in song_matches.items()
+        {"name": song_info["name"], "pdf": song_info.get("pdf")}
+        for chords, song_info in song_matches.items()
         if chords.startswith(progression_key)
     ]
 
     if not matching_songs:
-        return jsonify({"status": "success", "songs": "No matching songs found"})
+        return jsonify({"status": "success", "songs": []})
 
-    print(matching_songs)
     return jsonify({"status": "success", "songs": matching_songs})
 
 

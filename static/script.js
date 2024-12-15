@@ -188,10 +188,20 @@ $(".chord-btn").click(function () {
         const result = await response.json();
 
         if (result.status === "success") {
-            const matchedSongs = result.songs; // Expecting an array of songs
+            const matchedSongs = result.songs; // Expecting an array of song objects
             if (Array.isArray(matchedSongs) && matchedSongs.length > 0) {
-                // Create a list of songs to display
-                const songList = matchedSongs.map(song => `<li>${song}</li>`).join("");
+                // Create a list of songs with links
+                const songList = matchedSongs
+                    .map(song => {
+                        if (song.pdf) {
+                            // Link to PDF if available
+                            return `<li><a href="${song.pdf}" target="_blank">${song.name}</a></li>`;
+                        } else {
+                            // Just display the name if no PDF
+                            return `<li>${song.name}</li>`;
+                        }
+                    })
+                    .join("");
                 $("#chord-info-content").html(`<ul>${songList}</ul>`); // Display as a list
             } else {
                 $("#chord-info-content").text("No matching songs found");
