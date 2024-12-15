@@ -243,7 +243,26 @@ def generate_chord_audio(selected_key, selected_chord=None):
     return wav_filename
 
 
-# Handle chord generation requests
+# # Handle chord generation requests
+# @app.route("/generate_chord", methods=["POST"])
+# def generate_chord():
+#     data = request.get_json()
+#     selected_key = data.get("key")
+#     selected_chord = data.get("chord")
+#     # diatonic_chord_names = data.get(dia2name)
+
+#     try:
+#         # Generate the chord audio file
+#         audio_file = generate_chord_audio(selected_key, selected_chord)
+#         return jsonify({"status": "success", "audio_file": f"/{audio_file}"})
+#     except Exception as e:
+#         return jsonify({"status": "error", "message": str(e)})
+
+# # Serve audio files
+# @app.route("/static/sounds/<filename>")
+# def serve_audio_file(filename):
+#     return send_from_directory(AUDIO_DIR, filename)
+
 @app.route("/generate_chord", methods=["POST"])
 def generate_chord():
     data = request.get_json()
@@ -253,14 +272,43 @@ def generate_chord():
     try:
         # Generate the chord audio file
         audio_file = generate_chord_audio(selected_key, selected_chord)
-        return jsonify({"status": "success", "audio_file": f"/{audio_file}"})
+
+        # Calculate chord note names for display
+        music_key = key.Key(selected_key)
+        roman_to_scale = {
+            "I": ("maj", [1]), "ii": ("m", [2]), "iii": ("m", [3]),
+            "IV": ("maj", [4]), "V": ("maj", [5]), "vi": ("m", [6]), "vii°": ("dim", [7])
+        }
+
+        if selected_chord in roman_to_scale:
+            chord_type, scale_degrees = roman_to_scale[selected_chord]
+            root_midi = music_key.pitchFromDegree(scale_degrees[0]).midi
+            chord_intervals = {
+                "maj": [0, 4, 7],
+                "m": [0, 3, 7],
+                "dim": [0, 3, 6],
+            }
+            chord_midi_notes = [root_midi + interval for interval in chord_intervals[chord_type]]
+        else:
+            chord_midi_notes = []  # Default or handle errors gracefully
+
+        # Convert MIDI notes to note names without octave numbers
+        chord_note_names = [pitch.Pitch(midi).name for midi in chord_midi_notes]
+
+        # Generate display chord with root note and chord type
+        display_chord = f"{chord_note_names[0]}{chord_type if chord_type != 'maj' else ''}"
+        print(f"Response to frontend: {display_chord}, Chord notes: {chord_note_names}")
+
+        # Include note names and display chord in the response
+        return jsonify({
+            "status": "success",
+            "audio_file": f"/{audio_file}",
+            "chord_notes": chord_note_names,  # Add actual note names
+            "display_chord": display_chord  # Root and quality
+        })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
-# Serve audio files
-@app.route("/static/sounds/<filename>")
-def serve_audio_file(filename):
-    return send_from_directory(AUDIO_DIR, filename)
 
 if __name__ == "__main__":
     app.run(debug=True)
