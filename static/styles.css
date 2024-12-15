@@ -33,6 +33,48 @@
     background-color: #0056b3;
 }
 
+/* Style the delete button */
+.delete-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: none; /* Hide by default */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Show the delete button only on hover */
+.chord-container:hover .delete-btn {
+    display: flex; /* Make the delete button visible */
+}
+
+.chord-container {
+    position: relative; /* Ensures the delete button is positioned relative to the container */
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    transition: background-color 0.2s;
+}
+
+.chord-container:hover {
+    background-color: #eaeaea; /* Highlight the chord box on hover */
+}
+
+.delete-btn:hover {
+    background-color: darkred; /* Change color on hover */
+}
 /* Progression Bar */
 #progression-bar {
     min-height: 50px;

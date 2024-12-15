@@ -14,7 +14,7 @@ if not os.path.exists(AUDIO_DIR):
 
 # Path to the SoundFont file
 SOUNDFONT_PATH = "/Users/wangziyi/Desktop/JAZZ-chord-progression-analyser/GeneralUserGSv1.471.sf2"
-SOUNDFONT_PATH = "/Users/ege/Projects/JAZZ-chord-progression-analyser/GeneralUserGSv1.471.sf2"
+SOUNDFONT_PATH = "GeneralUserGSv1.471.sf2"
 fs = FluidSynth(SOUNDFONT_PATH)
 
 # Backend default settings for chord duration and tempo
@@ -58,7 +58,7 @@ def generate_chord_audio(selected_key, selected_chord):
     root_midi = root_pitch.midi  # Get MIDI note number
 
     # Adjust octave for high-pitched keys (F and above)
-    if selected_key in ["F", "F#", "G", "Ab", "A", "Bb", "B"]:
+    if selected_key in ["F", "F#", "Gb", "G", "G#", "Ab", "A", "Bb", "B"]:
         root_midi -= 12  # Lower by one octave
 
     # Construct the chord in root position using intervals
@@ -74,8 +74,9 @@ def generate_chord_audio(selected_key, selected_chord):
     s.append(tempo.MetronomeMark(number=DEFAULT_TEMPO_BPM))
     s.append(music_chord)
 
+    selected_key_clean = selected_key.replace("#", "sharp")
     # Generate MIDI and WAV filenames
-    midi_filename = f"{AUDIO_DIR}/{selected_key}_{selected_chord}.mid"
+    midi_filename = f"{AUDIO_DIR}/{selected_key_clean}_{selected_chord}.mid"
     wav_filename = midi_filename.replace(".mid", ".wav")
 
     # Write MIDI file
