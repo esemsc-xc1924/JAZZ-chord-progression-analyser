@@ -56,37 +56,37 @@ $(document).ready(function () {
 
     // Add single chord play functionality
     // Add single chord play functionality
-    $(".chord-btn").click(function () {
-        const button = $(this);
-        const chord = button.data("chord");
-        const key = $("#key-select").val();
-        const namingMode = $("#naming-mode").val(); // Get current naming mode
+$(".chord-btn").click(function () {
+    const button = $(this);
+    const chord = button.data("chord");
+    const key = $("#key-select").val();
+    const namingMode = $("#naming-mode").val(); // Get current naming mode
 
-        $.ajax({
-            type: "POST",
-            url: "/generate_chord",
-            contentType: "application/json",
-            data: JSON.stringify({ key, chord }),
-            success: function (response) {
-                if (response.status === "success") {
-                    const audioFile = response.audio_file; // Ensure audio file is retrieved correctly
-                    const displayChord = namingMode === "roman" ? response.display_chord_numeral : response.display_chord;
-                    
-                    // Play the audio file
-                    const audio = new Audio(audioFile);
-                    audio.play();
+    $.ajax({
+        type: "POST",
+        url: "/generate_chord",
+        contentType: "application/json",
+        data: JSON.stringify({ key, chord }),
+        success: function (response) {
+            if (response.status === "success") {
+                const audioFile = response.audio_file; // Ensure audio file is retrieved correctly
+                const displayChord = namingMode === "roman" ? response.display_chord_numeral : response.display_chord;
+                
+                // Play the audio file
+                const audio = new Audio(audioFile);
+                audio.play();
 
-                    // Update button text based on the naming mode
-                    button.text(displayChord);
-                } else {
-                    alert("Failed to generate chord audio.");
-                }
-            },
-            error: function () {
-                alert("Error communicating with the server.");
+                // Update button text based on the naming mode
+                button.text(displayChord);
+            } else {
+                alert("Failed to generate chord audio.");
             }
-        });
+        },
+        error: function () {
+            alert("Error communicating with the server.");
+        }
     });
+});
 
 
     // Make buttons draggable

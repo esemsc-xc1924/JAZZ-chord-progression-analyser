@@ -196,7 +196,7 @@ def generate_chord():
         display_chord = f"{chord_note_names[0]}{chord_type if chord_type != 'maj' else ''}"
         print(f"Response to frontend: {display_chord}, Chord notes: {chord_note_names}")
         display_chord_numeral = f"{selected_key} {selected_chord}"  # E.g., "C V"
-        print(f"ROMANResponse to frontend: {display_chord_numeral}")
+        print(f"ROMANResponse to frontend: {display_chord}, Chord notes: {chord_note_names}")
 
         # Include note names and display chord in the response
         return jsonify({

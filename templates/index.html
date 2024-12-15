@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music App</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .chord-container {
+            display: inline-block;
+            margin: 5px;
+            vertical-align: top;
+        }
+
+        .chord-extension {
+            display: block;
+            margin-top: 5px;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
     <div id="container">
@@ -41,13 +54,132 @@
 
         <!-- Buttons for chords -->
         <div id="chord-buttons">
-            <button class="chord-btn" data-chord="I">I</button>
-            <button class="chord-btn" data-chord="ii">ii</button>
-            <button class="chord-btn" data-chord="iii">iii</button>
-            <button class="chord-btn" data-chord="IV">IV</button>
-            <button class="chord-btn" data-chord="V">V</button>
-            <button class="chord-btn" data-chord="vi">vi</button>
-            <button class="chord-btn" data-chord="vii°">vii°</button>
+            <div class="chord-container">
+                <button class="chord-btn" data-chord="I">I</button>
+                <select class="chord-extension">
+                    <option value="">Basic</option>
+                    <option value="maj7">maj7</option>
+                    <option value="7">7</option>
+                    <option value="7b9">7b9</option>
+                    <option value="7b13">7b13</option>
+                    <option value="maj9">maj9</option>
+                    <option value="min7">min7</option>
+                    <option value="min9">min9</option>
+                    <option value="min6">min6</option>
+                    <option value="min11">min11</option>
+                    <option value="min13">min13</option>
+                    <option value="dim7">dim7</option>
+                    <option value="half-dim">half-dim</option>
+                </select>
+            </div>
+            <div class="chord-container">
+                <button class="chord-btn" data-chord="ii">ii</button>
+                <select class="chord-extension">
+                    <option value="">Basic</option>
+                    <option value="maj7">maj7</option>
+                    <option value="7">7</option>
+                    <option value="7b9">7b9</option>
+                    <option value="7b13">7b13</option>
+                    <option value="maj9">maj9</option>
+                    <option value="min7">min7</option>
+                    <option value="min9">min9</option>
+                    <option value="min6">min6</option>
+                    <option value="min11">min11</option>
+                    <option value="min13">min13</option>
+                    <option value="dim7">dim7</option>
+                    <option value="half-dim">half-dim</option>
+                </select>
+            </div>
+            <div class="chord-container">
+                <button class="chord-btn" data-chord="iii">iii</button>
+                <select class="chord-extension">
+                    <option value="">Basic</option>
+                    <option value="maj7">maj7</option>
+                    <option value="7">7</option>
+                    <option value="7b9">7b9</option>
+                    <option value="7b13">7b13</option>
+                    <option value="maj9">maj9</option>
+                    <option value="min7">min7</option>
+                    <option value="min9">min9</option>
+                    <option value="min6">min6</option>
+                    <option value="min11">min11</option>
+                    <option value="min13">min13</option>
+                    <option value="dim7">dim7</option>
+                    <option value="half-dim">half-dim</option>
+                </select>
+            </div>
+            <div class="chord-container">
+                <button class="chord-btn" data-chord="IV">IV</button>
+                <select class="chord-extension">
+                    <option value="">Basic</option>
+                    <option value="maj7">maj7</option>
+                    <option value="7">7</option>
+                    <option value="7b9">7b9</option>
+                    <option value="7b13">7b13</option>
+                    <option value="maj9">maj9</option>
+                    <option value="min7">min7</option>
+                    <option value="min9">min9</option>
+                    <option value="min6">min6</option>
+                    <option value="min11">min11</option>
+                    <option value="min13">min13</option>
+                    <option value="dim7">dim7</option>
+                    <option value="half-dim">half-dim</option>
+                </select>
+            </div>
+            <div class="chord-container">
+                <button class="chord-btn" data-chord="V">V</button>
+                <select class="chord-extension">
+                    <option value="">Basic</option>
+                    <option value="maj7">maj7</option>
+                    <option value="7">7</option>
+                    <option value="7b9">7b9</option>
+                    <option value="7b13">7b13</option>
+                    <option value="maj9">maj9</option>
+                    <option value="min7">min7</option>
+                    <option value="min9">min9</option>
+                    <option value="min6">min6</option>
+                    <option value="min11">min11</option>
+                    <option value="min13">min13</option>
+                    <option value="dim7">dim7</option>
+                    <option value="half-dim">half-dim</option>
+                </select>
+            </div>
+            <div class="chord-container">
+                <button class="chord-btn" data-chord="vi">vi</button>
+                <select class="chord-extension">
+                    <option value="">Basic</option>
+                    <option value="maj7">maj7</option>
+                    <option value="7">7</option>
+                    <option value="7b9">7b9</option>
+                    <option value="7b13">7b13</option>
+                    <option value="maj9">maj9</option>
+                    <option value="min7">min7</option>
+                    <option value="min9">min9</option>
+                    <option value="min6">min6</option>
+                    <option value="min11">min11</option>
+                    <option value="min13">min13</option>
+                    <option value="dim7">dim7</option>
+                    <option value="half-dim">half-dim</option>
+                </select>
+            </div>
+            <div class="chord-container">
+                <button class="chord-btn" data-chord="vii°">vii°</button>
+                <select class="chord-extension">
+                    <option value="">Basic</option>
+                    <option value="maj7">maj7</option>
+                    <option value="7">7</option>
+                    <option value="7b9">7b9</option>
+                    <option value="7b13">7b13</option>
+                    <option value="maj9">maj9</option>
+                    <option value="min7">min7</option>
+                    <option value="min9">min9</option>
+                    <option value="min6">min6</option>
+                    <option value="min11">min11</option>
+                    <option value="min13">min13</option>
+                    <option value="dim7">dim7</option>
+                    <option value="half-dim">half-dim</option>
+                </select>
+            </div>
         </div>
 
         <div id="chord-progression">
