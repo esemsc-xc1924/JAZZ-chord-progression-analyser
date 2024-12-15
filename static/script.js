@@ -5,6 +5,7 @@ $(document).ready(function () {
     $(".chord-btn").click(function () {
         const chord = $(this).data("chord");
         const key = $("#key-select").val(); // Get the selected key from the dropdown
+        console.log({ key, chord });
 
         // Send AJAX request to play the selected chord
         $.ajax({
@@ -51,19 +52,39 @@ $(document).ready(function () {
     });
 
     progressionBar.addEventListener("drop", (e) => {
-        e.preventDefault();
-        progressionBar.classList.remove("drag-over");
+    e.preventDefault();
+    progressionBar.classList.remove("drag-over");
 
-        // Get data from the dragged button
-        const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-        const newButton = document.createElement("button");
-        newButton.className = "chord-btn";
-        newButton.innerText = `${data.key} ${data.chord}`;
-        newButton.dataset.chord = data.chord;
-        newButton.dataset.key = data.key;
+    // Get data from the dragged button
+    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
 
-        progressionBar.appendChild(newButton);
-    });
+    // Create a container div for the chord and delete button
+    const chordContainer = document.createElement("div");
+    chordContainer.className = "chord-container";
+
+    // Create the chord button
+    const newButton = document.createElement("button");
+    newButton.className = "chord-btn";
+    newButton.innerText = `${data.key} ${data.chord}`;
+    newButton.dataset.chord = data.chord;
+    newButton.dataset.key = data.key;
+
+    // Create the delete button
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "delete-btn";
+    deleteButton.innerText = "✖"; // Cross icon for delete
+    deleteButton.onclick = function () {
+        chordContainer.remove(); // Remove the chord-container div
+    };
+
+    // Append the chord button and delete button to the container
+    chordContainer.appendChild(newButton);
+    chordContainer.appendChild(deleteButton);
+
+    // Add the container to the progression bar
+    progressionBar.appendChild(chordContainer);
+});
+
 
     // Play the chord progression
     $("#play-progression").click(async function () {

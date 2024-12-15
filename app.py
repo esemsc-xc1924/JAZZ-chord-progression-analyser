@@ -74,8 +74,9 @@ def generate_chord_audio(selected_key, selected_chord):
     s.append(tempo.MetronomeMark(number=DEFAULT_TEMPO_BPM))
     s.append(music_chord)
 
+    selected_key_clean = selected_key.replace("#", "sharp")
     # Generate MIDI and WAV filenames
-    midi_filename = f"{AUDIO_DIR}/{selected_key}_{selected_chord}.mid"
+    midi_filename = f"{AUDIO_DIR}/{selected_key_clean}_{selected_chord}.mid"
     wav_filename = midi_filename.replace(".mid", ".wav")
 
     # Write MIDI file
